@@ -102,17 +102,24 @@ x[ind2,4] <- 1.0
 x[ind2,5] <- income
 x[ind2,6] <- age
 
-# Estimate the system of equations
+# Estimate the system of equations on all observations
 fit.system <- lm(y ~ x - 1)
 
+# Get the standard deviation of the residual for the first equation
 sd.eq1 <- sd(residuals(fit.system)[1:1319])
 sd.eq1
 
+# Get the standard deviation of the residual for the second equation
 sd.eq2 <- sd(residuals(fit.system)[1320:2638])
 sd.eq2
 
+# Set up the weights vector
 w <- c(1/rep(sd.eq1, 1319), 1/rep(sd.eq2, 1319))
+
+# Compute the weighted variables for the regression
 y.star <- y * w
 x.star <- x * w
-lm(y.star ~ w + x.star - 1)
 
+# Do the weighted regression, remembering to weight the intercept term
+# not just the regressors
+lm(y.star ~ w + x.star - 1)
